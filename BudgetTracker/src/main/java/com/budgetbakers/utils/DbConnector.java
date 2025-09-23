@@ -17,7 +17,7 @@ public class DbConnector {
         try {
             InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties");
             if (input == null) {
-                System.out.println("Sorry, unable to find db.properties");
+            	logger.error("Unable to find db.properties");
                 return;
             }
             props = new Properties();

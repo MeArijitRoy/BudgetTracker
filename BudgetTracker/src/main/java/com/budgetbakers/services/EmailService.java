@@ -15,21 +15,18 @@ public class EmailService {
     private Properties emailProps = new Properties();
 
     public EmailService() {
-        logger.info("Initializing EmailService...");
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("email.properties")) {
             if (input == null) {
                 logger.error("FATAL: Could not find 'email.properties' in the classpath. EmailService will not be able to send emails.");
                 return;
             }
             emailProps.load(input);
-            logger.info("Email configuration loaded successfully from email.properties.");
         } catch (IOException ex) {
             logger.error("Failed to load email.properties due to an IOException. EmailService may not function correctly.", ex);
         }
     }
 
     public void sendTemporaryPassword(String toEmail, String tempPassword) {
-        logger.info("Attempting to send temporary password email to: {}", toEmail);
 
         final String fromEmail = emailProps.getProperty("mail.smtp.username");
         final String password = emailProps.getProperty("mail.smtp.password");
@@ -39,8 +36,6 @@ public class EmailService {
         props.put("mail.smtp.port", emailProps.getProperty("mail.smtp.port"));
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-
-        logger.debug("Configuring email session with host: {}", props.getProperty("mail.smtp.host"));
 
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {

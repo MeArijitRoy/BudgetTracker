@@ -26,7 +26,6 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
             logger.info("User logged out, session invalidated.");
         }
-        logger.info("User logged out, redirected to login page (login.jsp)");
         response.sendRedirect("login.jsp");
 	}
 

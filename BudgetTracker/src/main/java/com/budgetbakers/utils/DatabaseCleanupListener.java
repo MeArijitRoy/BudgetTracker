@@ -19,9 +19,7 @@ public class DatabaseCleanupListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         try {
-        	logger.info("Attempting to shut down the AbandonedConnectionCleanupThread...");
             AbandonedConnectionCleanupThread.checkedShutdown();
-            logger.info("Successfully shut down the AbandonedConnectionCleanupThread.");
         } catch (Exception e) {
         	logger.error("Failed to shut down AbandonedConnectionCleanupThread during context destruction.", e);
         }

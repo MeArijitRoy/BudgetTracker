@@ -99,15 +99,12 @@ public class GoogleCallbackServlet extends HttpServlet {
                 		HttpSession session = request.getSession();
                         session.setAttribute("email", user.getEmail());
                         if (user.isTemp()) {
-                        	logger.info("Email login initiated for non Google-linked user with a pending temporary password: {}. Redirecting to temporary password page (tempPassword.jsp).", user.getEmail());
                             response.sendRedirect("views/tempPassword.jsp");
                         } else {
-                        	logger.info("Email login initiated for non Google-linked user: {}. Now redirecting to password page (password.jsp) .", user.getEmail());
                             response.sendRedirect("views/password.jsp");
                         }
                     } else {
                         HttpSession session = request.getSession();
-                        logger.info("Google-linked login successful for user :{}.Now redirecting to home (home.jsp) .", user.getEmail());
                         session.setAttribute("user", user);
                         response.sendRedirect("views/home.jsp");
                     }
@@ -124,7 +121,6 @@ public class GoogleCallbackServlet extends HttpServlet {
         	 logger.error("An error (TokenResponseException) occurred during Google authentication.");
              response.sendRedirect("login.jsp?error=An error occurred during Google authentication. Please try again.");
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Error during Google authentication.", e);
             throw new ServletException("Error during Google authentication.", e);
         }
