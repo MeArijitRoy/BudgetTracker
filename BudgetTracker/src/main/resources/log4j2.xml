@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!-- Defines the log storage location inside the Tomcat server directory -->
+        <Property name="logPath">${sys:catalina.base}/logs/BudgetTracker</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Appender 1: Logs to the server console for real-time viewing -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %c{1} - %msg%n"/>
+        </Console>
+
+        <!-- Appender 2: Logs to a plain text file (.log) -->
+        <RollingFile name="RollingFile" fileName="${logPath}/app.log"
+                     filePattern="${logPath}/app-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %c{1} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- Creates a new log file every day -->
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy>
+                <!-- Deletes log files that are older than 7 days -->
+                <Delete basePath="${logPath}" maxDepth="1">
+                    <IfFileName glob="app-*.log" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- Appender 3: Logs to an HTML file (.html) -->
+        <RollingFile name="RollingFileHtml" fileName="${logPath}/app.html"
+                     filePattern="${logPath}/app-%d{yyyy-MM-dd}.html">
+            <HtmlLayout title="Budget Tracker Logs" />
+            <Policies>
+                <!-- Creates a new log file every day -->
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy>
+                <!-- Deletes log files that are older than 7 days -->
+                <Delete basePath="${logPath}" maxDepth="1">
+                    <IfFileName glob="app-*.html" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- The root logger sends all messages of level "info" or higher to the appenders -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="RollingFileHtml"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
+
