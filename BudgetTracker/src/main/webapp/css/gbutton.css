@@ -1,0 +1,27 @@
+.google-btn {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    
+    background-color: #4285F4;
+    color: white;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    
+    padding: 12px 24px; 
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25);
+    transition: background-color .3s, box-shadow .3s;
+}
+
+.google-btn:hover {
+    background-color: #357ae8;
+    box-shadow: 0 0 6px 0 rgba(0,0,0,0.25);
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
