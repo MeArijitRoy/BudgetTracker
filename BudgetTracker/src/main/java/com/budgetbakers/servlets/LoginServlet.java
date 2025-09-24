@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
         } else if (user.isTemp()) {
             request.getRequestDispatcher("views/tempPassword.jsp").forward(request, response);
         }else if ("GOOGLE".equals(user.getAuthProvider())) {
-            request.setAttribute("message", "This email is registered with Google. Please use the 'Sign in with Google' button.");
+            request.setAttribute("message", "Please sign in with Google.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("views/password.jsp").forward(request, response);

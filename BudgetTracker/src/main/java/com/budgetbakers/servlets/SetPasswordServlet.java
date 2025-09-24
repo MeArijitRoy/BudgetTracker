@@ -29,6 +29,9 @@ public class SetPasswordServlet extends HttpServlet {
             session.invalidate();
             request.setAttribute("message", "Password successfully set! Please log in with your new password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
+        }else if (email == null || email.isEmpty()) {
+            session.setAttribute("message", "Please enter your email first.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Passwords do not match. Please try again.");
             request.getRequestDispatcher("views/setPassword.jsp").forward(request, response);

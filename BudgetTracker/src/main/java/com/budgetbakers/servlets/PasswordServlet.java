@@ -26,7 +26,10 @@ public class PasswordServlet extends HttpServlet {
         if (userService.verifyPassword(email, password)) {
             session.setAttribute("user", email); 
             request.getRequestDispatcher("views/home.jsp").forward(request, response);
-        } else {
+        }else if (email == null || email.isEmpty()) {
+            session.setAttribute("message", "Please enter your email first.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }else {
             request.setAttribute("error", "Invalid password. Please try again.");
             request.getRequestDispatcher("views/password.jsp").forward(request, response);
         }

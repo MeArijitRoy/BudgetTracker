@@ -25,6 +25,9 @@ public class TempPasswordServlet extends HttpServlet {
 
         if (userService.verifyTempPassword(email, tempPassword)) {
             request.getRequestDispatcher("views/setPassword.jsp").forward(request, response);
+        }else if (email == null || email.isEmpty()) {
+            session.setAttribute("message", "Please enter your email first.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Invalid temporary password. Please try again.");
             request.getRequestDispatcher("views/tempPassword.jsp").forward(request, response);
