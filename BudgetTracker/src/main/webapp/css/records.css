@@ -1,0 +1,321 @@
+/* General Page Layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f7f6;
+}
+
+.page-container {
+    display: flex;
+    padding: 20px 30px;
+    gap: 30px;
+}
+
+/* Left-Side Filter Panel */
+.filter-panel {
+    flex-basis: 280px; /* Fixed width */
+    flex-shrink: 0;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    height: fit-content; /* Panel only takes up as much height as it needs */
+}
+
+.filter-panel h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.filter-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2D9A7A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #267D65;
+}
+
+
+/* Right-Side Records List */
+.records-container {
+    flex-grow: 1; /* Takes up the remaining space */
+}
+
+.records-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.add-record-btn {
+    background-color: #2D9A7A;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s;
+}
+
+.add-record-btn:hover {
+    background-color: #267D65;
+}
+
+/* Transaction Card Styles */
+.transaction-card {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    margin-bottom: 15px;
+    color: white;
+    gap: 15px;
+}
+
+.transaction-card .date {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    min-width: 60px;
+}
+.transaction-card .date .day {
+    font-size: 1.5rem;
+    display: block;
+}
+.transaction-card .date .month {
+    font-size: 0.8rem;
+    display: block;
+    text-transform: uppercase;
+}
+
+.transaction-card .details {
+    flex-grow: 1;
+}
+.transaction-card .details .type {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.transaction-card .details .note {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+
+.transaction-card .meta {
+    text-align: right;
+}
+.transaction-card .meta .amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.transaction-card .meta .category {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Card Color Schemes */
+.income {
+    background: linear-gradient(135deg, #66bb6a, #43a047);
+}
+.expense {
+    background: linear-gradient(135deg, #ef5350, #e53935); /* Red */
+}
+.transfer {
+    background: linear-gradient(135deg, #78909c, #546e7a); /* Grey */
+}
+
+/* Empty State Message */
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: #777;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 2px dashed #e0e0e0;
+}
+
+/* ========================================= */
+/* MODAL STYLES FOR ADD RECORD POP-UP        */
+/* ========================================= */
+
+.modal-backdrop {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 550px;
+}
+
+.modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-body form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-body .form-group {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+.modal-body .form-group label {
+    text-align: right;
+    font-weight: bold;
+    color: #555;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select,
+.modal-body .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* --- CORRECTED STYLES FOR TRANSACTION TYPE BUTTONS --- */
+.modal-body .form-group.transaction-type-group {
+    display: flex; /* Override the grid layout with flex */
+    justify-content: space-around;
+    width: 100%;
+}
+
+.type-radio {
+    flex: 1; /* Make each button take up equal space */
+    margin: 0 5px;
+}
+
+.type-radio input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.type-radio span {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.type-radio input[type="radio"]:checked + span {
+    background-color: #2D9A7A;
+    color: white;
+    border-color: #2D9A7A;
+}
+/* --- END OF CORRECTIONS --- */
+
+.modal-footer {
+    padding-top: 15px;
+    text-align: right;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.submit-btn {
+    background-color: #2D9A7A;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+

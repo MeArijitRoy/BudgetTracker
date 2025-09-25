@@ -1,0 +1,132 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<html>
+<head>
+<title>Records</title>
+<%-- Link to both required stylesheets --%>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/header.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/records.css">
+</head>
+<body>
+
+	<%-- Include the reusable header, marking "records" as the active page --%>
+	<jsp:include page="header.jsp">
+		<jsp:param name="activePage" value="records" />
+	</jsp:include>
+
+	<main class="page-container">
+
+		<%-- Left Panel: Filters --%>
+		<aside class="filter-panel">
+			<h3>Filters</h3>
+			<form action="<c:url value='/RecordsServlet' />" method="get">
+				<div class="filter-group">
+					<label for="filterDate">Date</label> <input type="date"
+						id="filterDate" name="filterDate">
+				</div>
+
+				<div class="filter-group">
+					<label for="filterType">Payment Type</label> <select
+						id="filterType" name="filterType">
+						<option value="" ${empty param.filterType ? 'selected' : ''}>All
+							Types</option>
+						<option value="Expense"
+							${param.filterType == 'Expense' ? 'selected' : ''}>Expense</option>
+						<option value="Income"
+							${param.filterType == 'Income' ? 'selected' : ''}>Income</option>
+						<option value="Transfer"
+							${param.filterType == 'Transfer' ? 'selected' : ''}>Transfer</option>
+					</select>
+				</div>
+				<%--
+                <div class="filter-group">
+                    <label for="filterLabels">Labels</label>
+                    <input type="text" id="filterLabels" name="filterLabels" placeholder="e.g., vacation">
+                </div>
+                --%>
+
+				<div class="filter-group">
+					<label for="filterAccount">Account</label> <select
+						id="filterAccount" name="filterAccount">
+						<option value="">All Accounts</option>
+						<c:forEach var="acc" items="${accounts}">
+							<option value="${acc.id}"
+								${param.filterAccount == acc.id ? 'selected' : ''}>${acc.name}</option>
+						</c:forEach>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterCategory">Category</label> <select
+						id="filterCategory" name="filterCategory">
+						<option value="">All Categories</option>
+						<c:forEach var="cat" items="${categories}">
+							<option value="${cat.id}"
+								${param.filterCategory == cat.id ? 'selected' : ''}>${cat.name}</option>
+						</c:forEach>
+					</select>
+				</div>
+
+				<button type="submit" class="filter-btn">Apply Filters</button>
+			</form>
+		</aside>
+
+		<%-- Right Panel: Transaction List --%>
+		<section class="records-container">
+			<div class="records-header">
+				<button id="openModalBtn" class="add-record-btn">+ Add
+					Record</button>
+			</div>
+			<div
+				style="background-color: white; padding: 10px; border: none; border-radius: 5px;">
+				<div class="table-responsive"
+					style="max-height: 70vh; overflow-y: auto;">
+					<div class="records-list">
+						<c:if test="${empty transactions}">
+							<div class="empty-state">
+								<p>No records found. Click "+ Add Record" to get started!</p>
+							</div>
+						</c:if>
+
+						<c:forEach var="tx" items="${transactions}">
+							<%-- The card's color changes based on the transaction type --%>
+							<div class="transaction-card ${tx.transactionType.toLowerCase()}">
+								<div class="date">
+									<fmt:formatDate value="${tx.transactionDate}" pattern="dd"
+										var="day" />
+									<fmt:formatDate value="${tx.transactionDate}" pattern="MMM"
+										var="month" />
+									<span class="day">${day}</span> <span class="month">${month}</span>
+								</div>
+								<div class="details">
+									<span class="type">${tx.transactionType}</span>
+									<div class="note">${tx.note}</div>
+								</div>
+								<div class="meta">
+									<div class="amount">
+										₹
+										<fmt:formatNumber value="${tx.amount}" type="number"
+											minFractionDigits="2" maxFractionDigits="2" />
+									</div>
+									<div class="category">${tx.category.name}</div>
+								</div>
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+			</div>
+
+		</section>
+	</main>
+
+	<jsp:include page="add_record_modal.jsp" />
+
+	<%-- Link to the JavaScript file --%>
+	<script src="${pageContext.request.contextPath}/js/records.js"></script>
+
+</body>
+</html>
+

@@ -1,16 +1,18 @@
 package com.budgetbakers.services;
 
-import com.budgetbakers.entities.User;
-import com.budgetbakers.utils.DbConnector;
-import com.budgetbakers.utils.PasswordUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.budgetbakers.entities.User;
+import com.budgetbakers.utils.DbConnector;
+import com.budgetbakers.utils.PasswordUtil;
 
 public class UserService {
 	

@@ -1,12 +1,13 @@
 package com.budgetbakers.utils;
 
-import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 
 @WebListener
 public class DatabaseCleanupListener implements ServletContextListener {

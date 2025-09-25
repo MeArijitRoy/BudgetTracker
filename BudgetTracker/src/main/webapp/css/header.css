@@ -1,0 +1,53 @@
+/* Styles specifically for the main header component */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.header .logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #2D9A7A;
+    text-decoration: none;
+}
+
+.header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 25px; /* Space between navigation items */
+}
+
+.header nav a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 5px 0;
+    border-bottom: 3px solid transparent; /* Placeholder for active state */
+    transition: color 0.3s, border-bottom-color 0.3s;
+}
+
+.header nav a:hover {
+    color: #2D9A7A;
+}
+
+/* This style will be applied dynamically by the JSP */
+.header nav a.active {
+    color: #2D9A7A;
+    border-bottom-color: #2D9A7A;
+}
+
+.header .profile-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+}
