@@ -82,7 +82,7 @@
 			</div>
 			<div
 				style="background-color: white; padding: 10px; border: none; border-radius: 5px;">
-				<div class="table-responsive"
+				<div
 					style="max-height: 70vh; overflow-y: auto;">
 					<div class="records-list">
 						<c:if test="${empty transactions}">

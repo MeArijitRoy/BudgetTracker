@@ -54,7 +54,7 @@ public class RecordsServlet extends HttpServlet {
             filters.put("category", request.getParameter("filterCategory"));
 
             // filters.put("labels", request.getParameter("filterLabels"));
-            System.out.println("filterAccount param = " + request.getParameter("filterAccount"));
+            logger.debug("filterAccount raw param = {}", request.getParameter("filterAccount"));
 
             filters.put("account", request.getParameter("filterAccount"));
 
