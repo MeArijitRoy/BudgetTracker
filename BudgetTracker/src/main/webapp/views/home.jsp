@@ -3,7 +3,6 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <%-- We need the stylesheet for the header to display correctly --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/records.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <style>
@@ -62,13 +61,10 @@
     </style>
 </head>
 <body>
-
-    <%-- Include the reusable header, marking "dashboard" as the active page --%>
     <jsp:include page="header.jsp">
         <jsp:param name="activePage" value="dashboard"/>
     </jsp:include>
 
-    <%-- This main section now holds your original simple content --%>
     <main class="main-content">
         <div class="container">
             <h1>Welcome to Your Dashboard!</h1>
@@ -81,5 +77,6 @@
     </main>
 
 </body>
+<script src="${pageContext.request.contextPath}/js/header.js"></script>
 </html>
 

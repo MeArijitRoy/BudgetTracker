@@ -5,7 +5,6 @@
 <html>
 <head>
 <title>Records</title>
-<%-- Link to both required stylesheets --%>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/header.css">
 <link rel="stylesheet"
@@ -82,8 +81,7 @@
 			</div>
 			<div
 				style="background-color: white; padding: 10px; border: none; border-radius: 5px;">
-				<div
-					style="max-height: 70vh; overflow-y: auto;">
+				<div style="max-height: 70vh; overflow-y: auto;">
 					<div class="records-list">
 						<c:if test="${empty transactions}">
 							<div class="empty-state">
@@ -101,6 +99,7 @@
 										var="month" />
 									<span class="day">${day}</span> <span class="month">${month}</span>
 								</div>
+
 								<div class="details">
 									<span class="type">${tx.transactionType}</span>
 									<div class="note">${tx.note}</div>
@@ -112,6 +111,7 @@
 											minFractionDigits="2" maxFractionDigits="2" />
 									</div>
 									<div class="category">${tx.category.name}</div>
+									<div class="category">${tx.account.name}</div>
 								</div>
 							</div>
 						</c:forEach>
@@ -121,11 +121,9 @@
 
 		</section>
 	</main>
-
 	<jsp:include page="add_record_modal.jsp" />
-
-	<%-- Link to the JavaScript file --%>
 	<script src="${pageContext.request.contextPath}/js/records.js"></script>
+	<script src="${pageContext.request.contextPath}/js/header.js"></script>
 
 </body>
 </html>

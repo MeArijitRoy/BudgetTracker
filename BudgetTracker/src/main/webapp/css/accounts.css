@@ -1,0 +1,162 @@
+/* General Page Layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f7f6;
+}
+
+.page-container {
+    display: flex;
+    padding: 20px 30px;
+    gap: 30px;
+}
+
+/* Left-Side "Add Account" Panel */
+.add-account-panel {
+    flex-basis: 320px; /* Fixed width */
+    flex-shrink: 0;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    height: fit-content; /* Panel only takes up as much height as it needs */
+}
+
+.add-account-panel h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+/* Special styling for the color picker */
+.form-group input[type="color"] {
+    height: 45px;
+    padding: 5px;
+}
+
+/* New style for the color picker group to align items side-by-side */
+.form-group.color-picker-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-group.color-picker-group label {
+    margin-bottom: 0; /* Remove bottom margin when side-by-side */
+}
+
+.form-group.color-picker-group input[type="color"] {
+    width: 100px; /* Give the color picker a fixed width */
+    height: 40px;
+}
+
+
+.add-account-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2D9A7A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-account-btn:hover {
+    background-color: #267D65;
+}
+
+
+/* Right-Side Account Cards Container */
+.accounts-container {
+    flex-grow: 1; /* Takes up the remaining space */
+}
+
+.accounts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* A Single Account Card */
+.account-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    overflow: hidden; /* Ensures the border doesn't stick out */
+    border-left: 5px solid; /* The color will be set inline */
+}
+
+.account-card-header {
+    padding: 15px 20px;
+}
+
+.account-card-header .account-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.account-card-body {
+    padding: 0 20px 20px 20px;
+}
+
+.account-card-body .current-balance {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2D9A7A;
+    margin-bottom: 15px;
+}
+
+.account-card-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.stat-income, .stat-expense {
+    display: flex;
+    align-items: center;
+}
+
+.stat-income::before {
+    content: '▲';
+    color: #4CAF50; /* Green arrow for income */
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.stat-expense::before {
+    content: '▼';
+    color: #ef5350; /* Red arrow for expense */
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+

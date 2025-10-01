@@ -13,8 +13,36 @@ public class Account {
     private String color;
     private boolean excludeFromStats;
     private Timestamp createdAt;
+    
+    private double totalIncome;
+    private double totalExpense;
+    private double currentBalance;
 
-    // Default constructor
+    public double getTotalIncome() {
+		return totalIncome;
+	}
+
+	public void setTotalIncome(double totalIncome) {
+		this.totalIncome = totalIncome;
+	}
+
+	public double getTotalExpense() {
+		return totalExpense;
+	}
+
+	public void setTotalExpense(double totalExpense) {
+		this.totalExpense = totalExpense;
+	}
+
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
+
+	public void setCurrentBalance(double currentBalance) {
+		this.currentBalance = currentBalance;
+	}
+
+	// Default constructor
     public Account() {
     }
 
