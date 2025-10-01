@@ -109,7 +109,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                     } else {
                         HttpSession session = request.getSession();
                         session.setAttribute("user", user);
-                        response.sendRedirect("views/home.jsp");
+                        response.sendRedirect("DashboardServlet");
                     }
                 } else {
                 	logger.error("Could not process your Google login.");

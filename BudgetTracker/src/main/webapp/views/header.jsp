@@ -5,7 +5,7 @@
     <nav>
         <ul>
             <%-- The 'active' class is applied based on the 'activePage' parameter passed from the including page --%>
-            <li><a href="${pageContext.request.contextPath}/views/home.jsp" 
+            <li><a href="${pageContext.request.contextPath}/DashboardServlet" 
                    class="${param.activePage == 'dashboard' ? 'active' : ''}">Dashboard</a></li>
             <li><a href="${pageContext.request.contextPath}/AccountsServlet" 
                    class="${param.activePage == 'accounts' ? 'active' : ''}">Accounts</a></li>

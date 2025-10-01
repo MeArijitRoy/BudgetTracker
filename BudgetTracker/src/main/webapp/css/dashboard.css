@@ -1,0 +1,117 @@
+/* Make the entire page structure a flex column */
+html, body {
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Prevent the main page scrollbar */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+}
+
+/* The header takes its natural height */
+.header {
+    flex-shrink: 0;
+}
+
+/* The main dashboard container will fill the remaining vertical space */
+.dashboard-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px;
+    overflow: hidden;
+}
+
+
+/* ========================================= */
+/* KPI CARDS STYLES (Fixed at the top)       */
+/* ========================================= */
+
+.kpi-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.kpi-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    flex: 1;
+    text-align: center;
+}
+
+.kpi-card .kpi-title {
+    color: #555;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.kpi-card .kpi-value {
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+
+/* ========================================= */
+/* ACCOUNT WIDGET STYLES (Scrollable Area)   */
+/* ========================================= */
+
+.account-widgets-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Makes this section scrollable */
+    padding: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 25px;
+    align-content: flex-start;
+}
+
+.account-widget {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+    height: 360px; /* Slightly increased height */
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    background-color: #2D9A7A;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.widget-header .widget-balance {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* CORRECTED: More robust flexbox setup for the chart area */
+.widget-chart-container {
+    padding: 10px 15px 15px 15px;
+    position: relative;
+    flex-grow: 1;
+    min-height: 0; /* Flexbox hack to ensure proper shrinking and growing */
+}
+

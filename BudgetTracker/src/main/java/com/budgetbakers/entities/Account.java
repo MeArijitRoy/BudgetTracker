@@ -1,6 +1,7 @@
 package com.budgetbakers.entities;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Account {
 
@@ -17,8 +18,18 @@ public class Account {
     private double totalIncome;
     private double totalExpense;
     private double currentBalance;
+    
+    List<CategorySpending> topSpendingCategories;
 
-    public double getTotalIncome() {
+    public List<CategorySpending> getTopSpendingCategories() {
+		return topSpendingCategories;
+	}
+
+	public void setTopSpendingCategories(List<CategorySpending> topSpendingCategories) {
+		this.topSpendingCategories = topSpendingCategories;
+	}
+
+	public double getTotalIncome() {
 		return totalIncome;
 	}
 
