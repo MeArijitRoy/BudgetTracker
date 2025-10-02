@@ -2,7 +2,7 @@ package com.budgetbakers.entities;
 
 public class MonthlyCashFlow {
 
-    private String month; // e.g., "Jan 2025"
+    private String month; 
     private double totalIncome;
     private double totalExpense;
 

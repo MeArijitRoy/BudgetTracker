@@ -73,10 +73,6 @@ public class RecordService {
         return categories;
     }
     
-    /**
-     * NEW METHOD FOR ANALYSIS PAGE
-     * Fetches a unique list of currencies the user has across all their accounts.
-     */
     public List<String> getDistinctCurrenciesForUser(int userId) {
         List<String> currencies = new ArrayList<>();
         String sql = "SELECT DISTINCT currency FROM accounts WHERE user_id = ?";
@@ -104,7 +100,6 @@ public class RecordService {
             "WHERE t.user_id = ? "
         );
         
-
         List<Object> params = new ArrayList<>();
         params.add(userId);
 
@@ -533,7 +528,6 @@ public class RecordService {
         }
     }
     public void deleteTransaction(int transactionId, int userId) {
-        // The WHERE clause includes user_id to ensure users can only delete their own transactions.
         String sql = "DELETE FROM transactions WHERE id = ? AND user_id = ?";
         try (Connection conn = DbConnector.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
