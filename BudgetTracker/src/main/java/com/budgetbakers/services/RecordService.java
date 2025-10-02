@@ -532,5 +532,25 @@ public class RecordService {
                 return "t.transaction_date >= CURDATE() - INTERVAL 12 MONTH";
         }
     }
+    public void deleteTransaction(int transactionId, int userId) {
+        // The WHERE clause includes user_id to ensure users can only delete their own transactions.
+        String sql = "DELETE FROM transactions WHERE id = ? AND user_id = ?";
+        try (Connection conn = DbConnector.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, transactionId);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Successfully deleted transaction ID {} for user ID {}", transactionId, userId);
+            } else {
+                logger.warn("No transaction was deleted. Transaction ID {} might not exist or not belong to user ID {}", transactionId, userId);
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error deleting transaction ID {} for user ID {}", transactionId, userId, e);
+        }
+    }
 }
 

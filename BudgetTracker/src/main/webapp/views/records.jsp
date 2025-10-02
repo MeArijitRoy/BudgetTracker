@@ -9,23 +9,25 @@
 	href="${pageContext.request.contextPath}/css/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/records.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/modal.css">
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232D9A7A' rx='15'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='70' font-family='Arial,sans-serif' font-weight='bold'%3EBT%3C/text%3E%3C/svg%3E">
 </head>
+
 <body>
 
-	<%-- Include the reusable header, marking "records" as the active page --%>
 	<jsp:include page="header.jsp">
 		<jsp:param name="activePage" value="records" />
 	</jsp:include>
 
 	<main class="page-container">
 
-		<%-- Left Panel: Filters --%>
 		<aside class="filter-panel">
 			<h3>Filters</h3>
 			<form action="<c:url value='/RecordsServlet' />" method="get">
 				<div class="filter-group">
 					<label for="filterDate">Date</label> <input type="date"
-						id="filterDate" name="filterDate">
+						id="filterDate" name="filterDate" value="${param.filterDate}">
 				</div>
 
 				<div class="filter-group">
@@ -41,13 +43,7 @@
 							${param.filterType == 'Transfer' ? 'selected' : ''}>Transfer</option>
 					</select>
 				</div>
-				<%--
-                <div class="filter-group">
-                    <label for="filterLabels">Labels</label>
-                    <input type="text" id="filterLabels" name="filterLabels" placeholder="e.g., vacation">
-                </div>
-                --%>
-
+                
 				<div class="filter-group">
 					<label for="filterAccount">Account</label> <select
 						id="filterAccount" name="filterAccount">
@@ -73,7 +69,6 @@
 			</form>
 		</aside>
 
-		<%-- Right Panel: Transaction List --%>
 		<section class="records-container">
 			<div class="records-header">
 				<button id="openModalBtn" class="add-record-btn">+ Add
@@ -90,7 +85,6 @@
 						</c:if>
 
 						<c:forEach var="tx" items="${transactions}">
-							<%-- The card's color changes based on the transaction type --%>
 							<div class="transaction-card ${tx.transactionType.toLowerCase()}">
 								<div class="date">
 									<fmt:formatDate value="${tx.transactionDate}" pattern="dd"
@@ -113,6 +107,17 @@
 									<div class="category">${tx.category.name}</div>
 									<div class="category">${tx.account.name}</div>
 								</div>
+								
+								<%-- CHANGE: Added the three-dots menu for Edit/Delete options --%>
+                                <div class="card-actions">
+                                    <button class="action-btn">⋮</button>
+                                    <div class="action-menu">
+                                        <%--<a href="#">Edit</a>--%>
+                                        <a href="${pageContext.request.contextPath}/DeleteTransactionServlet?id=${tx.id}"
+                                           onclick="return confirm('Are you sure you want to delete this transaction? This action cannot be undone.');"
+                                           class="delete-link">Delete</a>
+                                    </div>
+                                </div>
 							</div>
 						</c:forEach>
 					</div>
@@ -127,4 +132,3 @@
 
 </body>
 </html>
-

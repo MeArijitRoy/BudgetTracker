@@ -1,0 +1,149 @@
+/* ========================================= */
+/* MODAL STYLES FOR ADD RECORD POP-UP        */
+/* ========================================= */
+
+/* The dark background overlay that covers the whole page */
+.modal-backdrop {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stays in place even if the page scrolls */
+    z-index: 1000; /* Sits on top of everything else */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    
+    /* Use flexbox to center the modal content */
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+}
+
+/* The white pop-up box itself */
+.modal-content {
+    background-color: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 550px;
+}
+
+/* Header of the pop-up (contains title and close button) */
+.modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+}
+
+/* Main body of the pop-up (contains the form) */
+.modal-body {
+    padding: 25px;
+}
+
+.modal-body form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form rows */
+}
+
+/* A single row in the form (label + input) */
+.modal-body .form-group {
+    display: grid;
+    grid-template-columns: 100px 1fr; /* Creates a clean two-column layout */
+    gap: 15px;
+    align-items: center;
+}
+
+.modal-body .form-group label {
+    text-align: right; /* Aligns the labels to the right for a clean look */
+    font-weight: bold;
+    color: #555;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select,
+.modal-body .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Special styles for the Expense/Income/Transfer radio buttons */
+.modal-body .form-group.transaction-type-group {
+    display: flex; /* Override the grid layout with flex */
+    grid-column: 1 / -1; /* Make this group span the full width */
+    justify-content: space-around;
+    width: 100%;
+}
+
+.type-radio {
+    flex: 1; /* Make each button take up equal space */
+    margin: 0 5px;
+}
+
+.type-radio input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.type-radio span {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.type-radio input[type="radio"]:checked + span {
+    background-color: #2D9A7A;
+    color: white;
+    border-color: #2D9A7A;
+}
+
+/* Footer of the pop-up (contains the submit button) */
+.modal-footer {
+    padding-top: 15px;
+    text-align: right;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.submit-btn {
+    background-color: #2D9A7A;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Animation for the modal appearing */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
