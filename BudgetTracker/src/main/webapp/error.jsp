@@ -55,7 +55,7 @@
                 <em><c:out value="${errorMessage}" /></em>
             </c:if>
         </p>
-        <a href="${pageContext.request.contextPath}/views/home.jsp">Return to Dashboard</a>
+        <a href="${pageContext.request.contextPath}/DashboardServlet">Return to Dashboard</a>
     </div>
 </body>
 </html>

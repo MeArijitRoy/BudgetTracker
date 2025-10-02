@@ -11,7 +11,7 @@
                    class="${param.activePage == 'accounts' ? 'active' : ''}">Accounts</a></li>
             <li><a href="${pageContext.request.contextPath}/RecordsServlet" 
                    class="${param.activePage == 'records' ? 'active' : ''}">Records</a></li>
-            <li><a href="#" 
+            <li><a href="${pageContext.request.contextPath}/AnalysisPageServlet" 
                    class="${param.activePage == 'analysis' ? 'active' : ''}">Analysis</a></li>
             <li><a href="#" 
                    class="${param.activePage == 'investments' ? 'active' : ''}">Investments</a></li>
