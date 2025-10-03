@@ -52,13 +52,11 @@ body {
     font-size: 1rem;
 }
 
-/* Special styling for the color picker */
 .form-group input[type="color"] {
     height: 45px;
     padding: 5px;
 }
 
-/* New style for the color picker group to align items side-by-side */
 .form-group.color-picker-group {
     display: flex;
     justify-content: space-between;
@@ -66,14 +64,13 @@ body {
 }
 
 .form-group.color-picker-group label {
-    margin-bottom: 0; /* Remove bottom margin when side-by-side */
+    margin-bottom: 0;
 }
 
 .form-group.color-picker-group input[type="color"] {
-    width: 100px; /* Give the color picker a fixed width */
+    width: 100px;
     height: 40px;
 }
-
 
 .add-account-btn {
     width: 100%;
@@ -114,7 +111,11 @@ body {
 }
 
 .account-card-header {
+    position: relative; /* Crucial anchor for the actions menu */
     padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .account-card-header .account-name {
@@ -158,5 +159,86 @@ body {
     color: #ef5350; /* Red arrow for expense */
     margin-right: 8px;
     font-size: 1.2rem;
+}
+
+/* ========================================= */
+/* NEW STYLES FOR CARD ACTIONS MENU          */
+/* ========================================= */
+
+.card-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.action-btn {
+    background: #f0f0f0;
+    border: none;
+    color: #555;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    line-height: 30px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background: #e0e0e0;
+}
+
+.action-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    right: 0;
+    top: 35px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    min-width: 100px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.action-menu.show {
+    display: block; /* Show the menu */
+}
+
+.action-menu a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.action-menu a:hover {
+    background-color: #f5f5f5;
+}
+
+.action-menu a.delete-link {
+    color: #e53935; /* Red for delete */
+}
+
+/* Empty state message for when there are no accounts */
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: #777;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 2px dashed #e0e0e0;
+}
+
+/* Error message for the form */
+.form-error {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ef9a9a;
 }
 

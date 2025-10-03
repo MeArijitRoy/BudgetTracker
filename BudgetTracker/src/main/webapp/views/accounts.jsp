@@ -5,21 +5,18 @@
 <html>
 <head>
     <title>Accounts</title>
-    <%-- Link to the required stylesheets --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/accounts.css">
 	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232D9A7A' rx='15'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='70' font-family='Arial,sans-serif' font-weight='bold'%3EBT%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
-    <%-- Include the reusable header, marking "accounts" as the active page --%>
     <jsp:include page="header.jsp">
         <jsp:param name="activePage" value="accounts"/>
     </jsp:include>
 
     <main class="page-container">
 
-        <%-- Left Panel: Add New Account Form --%>
         <aside class="add-account-panel">
             <h3>Add New Account</h3>
             <form action="${pageContext.request.contextPath}/AddAccountServlet" method="post">
@@ -60,7 +57,6 @@
             </form>
         </aside>
 
-        <%-- Right Panel: List of Account Cards (Now with Dynamic Currency) --%>
         <section class="accounts-container">
             <div class="accounts-list">
                 
@@ -74,10 +70,20 @@
                     <div class="account-card" style="border-left-color: ${acc.color};">
                         <div class="account-card-header">
                             <h4 class="account-name">${acc.name}</h4>
+                            
+                            <%-- CHANGE: Added the three-dots menu for Edit/Delete options --%>
+                            <div class="card-actions">
+                                <button class="action-btn">⋮</button>
+                                <div class="action-menu">
+                                    <!-- <a href="#">Edit</a> -->
+                                    <a href="${pageContext.request.contextPath}/DeleteAccountServlet?id=${acc.id}"
+                                       onclick="return confirm('Are you sure you want to delete this account? All of its transactions will also be permanently deleted.');"
+                                       class="delete-link">Delete</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="account-card-body">
                             <div class="current-balance">
-                                <%-- DYNAMIC CURRENCY SYMBOL --%>
                                 <c:choose>
                                     <c:when test="${acc.currency == 'INR'}">₹</c:when>
                                     <c:when test="${acc.currency == 'USD'}">$</c:when>
@@ -111,8 +117,9 @@
             </div>
         </section>
     </main>
-
+    
     <script src="${pageContext.request.contextPath}/js/header.js"></script>
+    <script src="${pageContext.request.contextPath}/js/accounts.js"></script>
 </body>
 </html>
 

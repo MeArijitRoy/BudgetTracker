@@ -181,5 +181,24 @@ public class AccountService {
         }
         return spendingList;
     }
+    public void deleteAccount(int accountId, int userId) {
+        String sql = "DELETE FROM accounts WHERE id = ? AND user_id = ?";
+        try (Connection conn = DbConnector.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, accountId);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Successfully deleted account ID {} for user ID {}", accountId, userId);
+            } else {
+                logger.warn("No account was deleted. Account ID {} might not exist or not belong to user ID {}", accountId, userId);
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error deleting account ID {} for user ID {}", accountId, userId, e);
+        }
+    }
 }
 
