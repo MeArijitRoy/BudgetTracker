@@ -24,7 +24,11 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-
+/**
+ * Servlet controller that handles the callback from the Google Sign-In OAuth 2.0 flow.
+ * It receives an authorization code from Google, exchanges it for an ID token, verifies
+ * the token, and then either logs in an existing user or creates a new one.
+ */
 @WebServlet("/GoogleCallbackServlet") 
 public class GoogleCallbackServlet extends HttpServlet {
 
@@ -34,6 +38,12 @@ public class GoogleCallbackServlet extends HttpServlet {
     private String GOOGLE_CLIENT_SECRET;
     private String GOOGLE_REDIRECT_URI;
 
+    /**
+     * Initializes the servlet by loading Google API credentials from the
+     * `google-config.properties` file. This method is called once when the servlet is first created.
+     *
+     * @throws ServletException if the configuration file cannot be found or loaded.
+     */
     @Override
     public void init() throws ServletException {
 
@@ -53,6 +63,15 @@ public class GoogleCallbackServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the HTTP GET request from Google's redirect. It processes the authorization code,
+     * verifies the user's identity with Google, and manages the user session.
+     *
+     * @param request  the {@link HttpServletRequest} object that contains the authorization code from Google.
+     * @param response the {@link HttpServletResponse} object that contains the response the servlet sends to the client.
+     * @throws ServletException if a servlet-specific error occurs.
+     * @throws IOException if an I/O error occurs.
+     */
     @SuppressWarnings("deprecation")
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -128,7 +147,17 @@ public class GoogleCallbackServlet extends HttpServlet {
             throw new ServletException("Error during Google authentication.", e);
         }
     }
+    
+    /**
+     * Delegates POST requests to the {@code doGet} method.
+     *
+     * @param request  the {@link HttpServletRequest} object that contains the request the client has made of the servlet
+     * @param response the {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @throws ServletException if the request for the POST could not be handled
+     * @throws IOException if an input or output error is detected when the servlet handles the POST request
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
 }
+

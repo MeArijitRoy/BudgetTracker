@@ -15,6 +15,11 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Servlet controller for handling requests related to the main Accounts page.
+ * This servlet is responsible for fetching and displaying a summary of all
+ * of the user's financial accounts.
+ */
 @WebServlet("/AccountsServlet")
 public class AccountsServlet extends HttpServlet {
 
@@ -22,6 +27,16 @@ public class AccountsServlet extends HttpServlet {
 	private static final Logger logger = LogManager.getLogger(AccountsServlet.class);
     private final AccountService accountService = new AccountService();
 
+    /**
+     * Handles HTTP GET requests to display the accounts page. It retrieves a summary
+     * for each of the logged-in user's accounts, including calculated balances and totals,
+     * and forwards this data to the `accounts.jsp` for rendering.
+     *
+     * @param request  the {@link HttpServletRequest} object that contains the request the client has made of the servlet
+     * @param response the {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @throws ServletException if the request for the GET could not be handled
+     * @throws IOException if an input or output error is detected when the servlet handles the GET request
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,3 +64,4 @@ public class AccountsServlet extends HttpServlet {
         }
     }
 }
+

@@ -1,5 +1,22 @@
 package com.budgetbakers.services;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.budgetbakers.entities.Account;
 import com.budgetbakers.entities.Category;
 import com.budgetbakers.entities.CategorySpending;
@@ -7,22 +24,20 @@ import com.budgetbakers.entities.DailyBalance;
 import com.budgetbakers.entities.MonthlyCashFlow;
 import com.budgetbakers.entities.Transaction;
 import com.budgetbakers.utils.DbConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+/**
+ * Service class for handling all business logic related to financial records.
+ * This includes managing transactions, categories, and providing data for analysis reports.
+ */
 public class RecordService {
 
     private static final Logger logger = LogManager.getLogger(RecordService.class);
 
-    
+    /**
+     * Fetches a list of all accounts belonging to a specific user.
+     * @param userId The ID of the user whose accounts are to be fetched.
+     * @return A list of {@link Account} objects.
+     */
     public List<Account> getAccountsForUser(int userId) {
         List<Account> accounts = new ArrayList<>();
         String sql = "SELECT * FROM accounts WHERE user_id = ? ORDER BY name ASC";
@@ -50,6 +65,11 @@ public class RecordService {
         return accounts;
     }
 
+    /**
+     * Fetches a list of all categories belonging to a specific user.
+     * @param userId The ID of the user whose categories are to be fetched.
+     * @return A list of {@link Category} objects.
+     */
     public List<Category> getCategoriesForUser(int userId) {
         List<Category> categories = new ArrayList<>();
         String sql = "SELECT * FROM categories WHERE user_id = ? ORDER BY name ASC";
@@ -72,7 +92,12 @@ public class RecordService {
         }
         return categories;
     }
-    
+
+    /**
+     * Fetches a unique list of currencies the user has across all their accounts.
+     * @param userId The ID of the user.
+     * @return A list of distinct currency codes (e.g., "INR", "USD").
+     */
     public List<String> getDistinctCurrenciesForUser(int userId) {
         List<String> currencies = new ArrayList<>();
         String sql = "SELECT DISTINCT currency FROM accounts WHERE user_id = ?";
@@ -90,6 +115,12 @@ public class RecordService {
         return currencies;
     }
 
+    /**
+     * Fetches a list of all transactions for a user, with optional filters.
+     * @param userId The ID of the user whose transactions are to be fetched.
+     * @param filters A map of filter criteria (e.g., "date", "type", "category", "account").
+     * @return A list of {@link Transaction} objects matching the filters.
+     */
     public List<Transaction> getTransactionsForUser(int userId, Map<String, String> filters) {
         List<Transaction> transactions = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -100,6 +131,7 @@ public class RecordService {
             "WHERE t.user_id = ? "
         );
         
+
         List<Object> params = new ArrayList<>();
         params.add(userId);
 
@@ -134,6 +166,7 @@ public class RecordService {
             for (int i = 0; i < params.size(); i++) {
                 stmt.setObject(i + 1, params.get(i));
             }
+            logger.info("Final SQL: {} | Params: {}", sql.toString(), params);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -165,6 +198,10 @@ public class RecordService {
         return transactions;
     }
 
+    /**
+     * Saves a new transaction to the database.
+     * @param transaction The {@link Transaction} object to be saved.
+     */
     public void addTransaction(Transaction transaction) {
         String sql = "INSERT INTO transactions (user_id, account_id, category_id, transaction_type, amount, transaction_date, note, to_account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DbConnector.getInstance().getConnection();
@@ -197,6 +234,14 @@ public class RecordService {
         }
     }
     
+    /**
+     * Fetches and aggregates cash flow data (income vs. expense) for the Analysis page.
+     * @param userId The ID of the user.
+     * @param dateRange The string representing the time period (e.g., "last30days").
+     * @param accountIds A list of account IDs to include in the analysis. Can be null.
+     * @param currency The currency to filter the analysis by.
+     * @return A list of {@link MonthlyCashFlow} objects representing the cash flow trend.
+     */
     public List<MonthlyCashFlow> getCashFlowTrendForAnalysis(int userId, String dateRange, List<Integer> accountIds, String currency) {
         List<MonthlyCashFlow> cashFlowList = new ArrayList<>();
         
@@ -208,18 +253,18 @@ public class RecordService {
             case "last30days":
                 groupByClause = "GROUP BY period ORDER BY period ASC";
                 dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 30 DAY";
-                dateFormat = "%Y-%m-%d";
+                dateFormat = "%Y-%m-%d"; // Group by day
                 break;
             case "last6months":
                 groupByClause = "GROUP BY period ORDER BY period ASC";
                 dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 6 MONTH";
-                dateFormat = "%Y-%m";
+                dateFormat = "%Y-%m"; // Group by month
                 break;
             case "last12months":
             default:
                 groupByClause = "GROUP BY period ORDER BY period ASC";
                 dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 12 MONTH";
-                dateFormat = "%Y-%m";
+                dateFormat = "%Y-%m"; // Group by month
                 break;
         }
 
@@ -268,23 +313,18 @@ public class RecordService {
         
         return cashFlowList;
     }
-
+    
+    /**
+     * Fetches and aggregates spending data by category for the Analysis page.
+     * @param userId The ID of the user.
+     * @param dateRange The string representing the time period.
+     * @param accountIds A list of account IDs to include. Can be null.
+     * @param currency The currency to filter by.
+     * @return A list of {@link CategorySpending} objects.
+     */
     public List<CategorySpending> getSpendingByCategoryForAnalysis(int userId, String dateRange, List<Integer> accountIds, String currency) {
         List<CategorySpending> spendingList = new ArrayList<>();
-        String dateFilterClause;
-
-        switch (dateRange) {
-            case "last30days":
-                dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 30 DAY";
-                break;
-            case "last6months":
-                dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 6 MONTH";
-                break;
-            case "last12months":
-            default:
-                dateFilterClause = "t.transaction_date >= CURDATE() - INTERVAL 12 MONTH";
-                break;
-        }
+        String dateFilterClause = getDateFilterClause(dateRange);
 
         StringBuilder sql = new StringBuilder(
             "SELECT c.name as category_name, SUM(t.amount) as total_amount " +
@@ -329,6 +369,14 @@ public class RecordService {
         return spendingList;
     }
     
+    /**
+     * Fetches and calculates the daily balance trend for the Analysis page.
+     * @param userId The ID of the user.
+     * @param dateRange The string representing the time period.
+     * @param accountIds A list of account IDs to include. Can be null.
+     * @param currency The currency to filter by.
+     * @return A list of {@link DailyBalance} objects representing the balance trend.
+     */
     public List<DailyBalance> getBalanceTrendForAnalysis(int userId, String dateRange, List<Integer> accountIds, String currency) {
         List<DailyBalance> balanceTrend = new ArrayList<>();
         LocalDate endDate = LocalDate.now();
@@ -366,93 +414,15 @@ public class RecordService {
         
         return balanceTrend;
     }
-
-    private double calculateStartingBalance(Connection conn, int userId, LocalDate startDate, List<Integer> accountIds, String currency) throws SQLException {
-        double totalInitialBalance = 0;
-        double pastNetTransactions = 0;
-
-        StringBuilder initialBalanceSql = new StringBuilder("SELECT SUM(initial_balance) FROM accounts WHERE user_id = ? AND currency = ? ");
-        if (accountIds != null && !accountIds.isEmpty()) {
-            initialBalanceSql.append("AND id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
-        }
-        
-        try (PreparedStatement stmt = conn.prepareStatement(initialBalanceSql.toString())) {
-            int paramIndex = 1;
-            stmt.setInt(paramIndex++, userId);
-            stmt.setString(paramIndex++, currency);
-            if (accountIds != null && !accountIds.isEmpty()) {
-                for (Integer id : accountIds) {
-                    stmt.setInt(paramIndex++, id);
-                }
-            }
-            try(ResultSet rs = stmt.executeQuery()) {
-                if(rs.next()) totalInitialBalance = rs.getDouble(1);
-            }
-        }
-
-        StringBuilder pastTransactionsSql = new StringBuilder(
-            "SELECT SUM(CASE WHEN transaction_type = 'Income' THEN amount WHEN transaction_type = 'Expense' THEN -amount ELSE 0 END) " +
-            "FROM transactions WHERE user_id = ? AND account_id IN (SELECT id FROM accounts WHERE user_id = ? AND currency = ?) AND transaction_date < ? "
-        );
-         if (accountIds != null && !accountIds.isEmpty()) {
-            pastTransactionsSql.append("AND account_id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
-        }
-
-        try (PreparedStatement stmt = conn.prepareStatement(pastTransactionsSql.toString())) {
-            int paramIndex = 1;
-            stmt.setInt(paramIndex++, userId);
-            stmt.setInt(paramIndex++, userId);
-            stmt.setString(paramIndex++, currency);
-            stmt.setDate(paramIndex++, Date.valueOf(startDate));
-             if (accountIds != null && !accountIds.isEmpty()) {
-                for (Integer id : accountIds) {
-                    stmt.setInt(paramIndex++, id);
-                }
-            }
-            try(ResultSet rs = stmt.executeQuery()) {
-                if(rs.next()) pastNetTransactions = rs.getDouble(1);
-            }
-        }
-
-        return totalInitialBalance + pastNetTransactions;
-    }
     
-    private Map<LocalDate, Double> getDailyNetChanges(Connection conn, int userId, LocalDate startDate, LocalDate endDate, List<Integer> accountIds, String currency) throws SQLException {
-        Map<LocalDate, Double> dailyChanges = new HashMap<>();
-        StringBuilder sql = new StringBuilder(
-            "SELECT DATE(transaction_date) as day, SUM(CASE WHEN transaction_type = 'Income' THEN amount WHEN transaction_type = 'Expense' THEN -amount ELSE 0 END) as net_change " +
-            "FROM transactions WHERE user_id = ? AND account_id IN (SELECT id FROM accounts WHERE user_id = ? AND currency = ?) " +
-            "AND transaction_date >= ? AND transaction_date <= ? "
-        );
-
-        if (accountIds != null && !accountIds.isEmpty()) {
-            sql.append("AND account_id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
-        }
-        sql.append("GROUP BY day ORDER BY day ASC");
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
-            int paramIndex = 1;
-            stmt.setInt(paramIndex++, userId);
-            stmt.setInt(paramIndex++, userId);
-            stmt.setString(paramIndex++, currency);
-            stmt.setDate(paramIndex++, Date.valueOf(startDate));
-            stmt.setDate(paramIndex++, Date.valueOf(endDate));
-            if (accountIds != null && !accountIds.isEmpty()) {
-                for (Integer id : accountIds) {
-                    stmt.setInt(paramIndex++, id);
-                }
-            }
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while(rs.next()) {
-                    LocalDate date = rs.getDate("day").toLocalDate();
-                    double netChange = rs.getDouble("net_change");
-                    dailyChanges.put(date, netChange);
-                }
-            }
-        }
-        return dailyChanges;
-    }
+    /**
+     * Fetches a raw list of transactions based on analysis filters.
+     * @param userId The ID of the user.
+     * @param dateRange The string representing the time period.
+     * @param accountIds A list of account IDs to include.
+     * @param currency The currency to filter by.
+     * @return A list of {@link Transaction} objects.
+     */
     public List<Transaction> getTransactionsForAnalysis(int userId, String dateRange, List<Integer> accountIds, String currency) {
         List<Transaction> transactions = new ArrayList<>();
         String dateFilterClause = getDateFilterClause(dateRange);
@@ -514,19 +484,12 @@ public class RecordService {
         }
         return transactions;
     }
-    private String getDateFilterClause(String dateRange) {
-        switch (dateRange) {
-            case "last30days":
-                return "t.transaction_date >= CURDATE() - INTERVAL 30 DAY";
-            case "last3months":
-                return "t.transaction_date >= CURDATE() - INTERVAL 3 MONTH";
-            case "last6months":
-                return "t.transaction_date >= CURDATE() - INTERVAL 6 MONTH";
-            case "last12months":
-            default:
-                return "t.transaction_date >= CURDATE() - INTERVAL 12 MONTH";
-        }
-    }
+
+    /**
+     * Deletes a specific transaction belonging to a specific user.
+     * @param transactionId The ID of the transaction to delete.
+     * @param userId The ID of the user who owns the transaction (for security).
+     */
     public void deleteTransaction(int transactionId, int userId) {
         String sql = "DELETE FROM transactions WHERE id = ? AND user_id = ?";
         try (Connection conn = DbConnector.getInstance().getConnection();
@@ -544,6 +507,133 @@ public class RecordService {
 
         } catch (SQLException e) {
             logger.error("Error deleting transaction ID {} for user ID {}", transactionId, userId, e);
+        }
+    }
+
+    /**
+     * Private helper to calculate the total balance of selected accounts at a specific start date.
+     * @param conn The database connection.
+     * @param userId The user's ID.
+     * @param startDate The start date of the analysis period.
+     * @param accountIds The list of account IDs to include.
+     * @param currency The currency to filter by.
+     * @return The calculated starting balance.
+     * @throws SQLException if a database error occurs.
+     */
+    private double calculateStartingBalance(Connection conn, int userId, LocalDate startDate, List<Integer> accountIds, String currency) throws SQLException {
+        double totalInitialBalance = 0;
+        double pastNetTransactions = 0;
+
+        StringBuilder initialBalanceSql = new StringBuilder("SELECT SUM(initial_balance) FROM accounts WHERE user_id = ? AND currency = ? ");
+        if (accountIds != null && !accountIds.isEmpty()) {
+            initialBalanceSql.append("AND id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
+        }
+        
+        try (PreparedStatement stmt = conn.prepareStatement(initialBalanceSql.toString())) {
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, userId);
+            stmt.setString(paramIndex++, currency);
+            if (accountIds != null && !accountIds.isEmpty()) {
+                for (Integer id : accountIds) {
+                    stmt.setInt(paramIndex++, id);
+                }
+            }
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) totalInitialBalance = rs.getDouble(1);
+            }
+        }
+
+        StringBuilder pastTransactionsSql = new StringBuilder(
+            "SELECT SUM(CASE WHEN transaction_type = 'Income' THEN amount WHEN transaction_type = 'Expense' THEN -amount ELSE 0 END) " +
+            "FROM transactions WHERE user_id = ? AND account_id IN (SELECT id FROM accounts WHERE user_id = ? AND currency = ?) AND transaction_date < ? "
+        );
+         if (accountIds != null && !accountIds.isEmpty()) {
+            pastTransactionsSql.append("AND account_id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement(pastTransactionsSql.toString())) {
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, userId);
+            stmt.setInt(paramIndex++, userId);
+            stmt.setString(paramIndex++, currency);
+            stmt.setDate(paramIndex++, Date.valueOf(startDate));
+             if (accountIds != null && !accountIds.isEmpty()) {
+                for (Integer id : accountIds) {
+                    stmt.setInt(paramIndex++, id);
+                }
+            }
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) pastNetTransactions = rs.getDouble(1);
+            }
+        }
+
+        return totalInitialBalance + pastNetTransactions;
+    }
+    
+    /**
+     * Private helper to get a map of daily net financial changes (income - expense) over a period.
+     * @param conn The database connection.
+     * @param userId The user's ID.
+     * @param startDate The start date of the period.
+     * @param endDate The end date of the period.
+     * @param accountIds The list of account IDs to include.
+     * @param currency The currency to filter by.
+     * @return A map where the key is the date and the value is the net change for that day.
+     * @throws SQLException if a database error occurs.
+     */
+    private Map<LocalDate, Double> getDailyNetChanges(Connection conn, int userId, LocalDate startDate, LocalDate endDate, List<Integer> accountIds, String currency) throws SQLException {
+        Map<LocalDate, Double> dailyChanges = new HashMap<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT DATE(transaction_date) as day, SUM(CASE WHEN transaction_type = 'Income' THEN amount WHEN transaction_type = 'Expense' THEN -amount ELSE 0 END) as net_change " +
+            "FROM transactions WHERE user_id = ? AND account_id IN (SELECT id FROM accounts WHERE user_id = ? AND currency = ?) " +
+            "AND transaction_date >= ? AND transaction_date <= ? "
+        );
+
+        if (accountIds != null && !accountIds.isEmpty()) {
+            sql.append("AND account_id IN (").append(accountIds.stream().map(id -> "?").collect(Collectors.joining(","))).append(") ");
+        }
+        sql.append("GROUP BY day ORDER BY day ASC");
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, userId);
+            stmt.setInt(paramIndex++, userId);
+            stmt.setString(paramIndex++, currency);
+            stmt.setDate(paramIndex++, Date.valueOf(startDate));
+            stmt.setDate(paramIndex++, Date.valueOf(endDate));
+            if (accountIds != null && !accountIds.isEmpty()) {
+                for (Integer id : accountIds) {
+                    stmt.setInt(paramIndex++, id);
+                }
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while(rs.next()) {
+                    LocalDate date = rs.getDate("day").toLocalDate();
+                    double netChange = rs.getDouble("net_change");
+                    dailyChanges.put(date, netChange);
+                }
+            }
+        }
+        return dailyChanges;
+    }
+
+    /**
+     * Private helper method to return a SQL date filtering clause based on a string identifier.
+     * @param dateRange The string representing the date range (e.g., "last30days").
+     * @return A SQL string for the WHERE clause.
+     */
+    private String getDateFilterClause(String dateRange) {
+        switch (dateRange) {
+            case "last30days":
+                return "t.transaction_date >= CURDATE() - INTERVAL 30 DAY";
+            case "last3months":
+                return "t.transaction_date >= CURDATE() - INTERVAL 3 MONTH";
+            case "last6months":
+                return "t.transaction_date >= CURDATE() - INTERVAL 6 MONTH";
+            case "last12months":
+            default:
+                return "t.transaction_date >= CURDATE() - INTERVAL 12 MONTH";
         }
     }
 }

@@ -16,11 +16,20 @@ import javax.mail.internet.MimeMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Service class responsible for handling all email sending functionality.
+ * It loads SMTP server configuration from 'email.properties' and provides
+ * methods to send specific types of emails, such as temporary passwords.
+ */
 public class EmailService {
 
 	private static final Logger logger = LogManager.getLogger(EmailService.class);
     private Properties emailProps = new Properties();
 
+    /**
+     * Constructs an EmailService and loads the email configuration from the
+     * 'email.properties' file located in the classpath.
+     */
     public EmailService() {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("email.properties")) {
             if (input == null) {
@@ -33,6 +42,12 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a temporary password to a new user's email address.
+     * It uses the configured SMTP server to dispatch the email.
+     * @param toEmail The recipient's email address.
+     * @param tempPassword The plain-text temporary password to be sent.
+     */
     public void sendTemporaryPassword(String toEmail, String tempPassword) {
 
         final String fromEmail = emailProps.getProperty("mail.smtp.username");

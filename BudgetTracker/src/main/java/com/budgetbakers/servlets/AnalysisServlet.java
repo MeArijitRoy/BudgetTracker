@@ -17,6 +17,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servlet controller that acts as a data API for the Analysis page.
+ * This servlet does not forward to a JSP. Instead, it handles asynchronous (AJAX)
+ * requests from the frontend, fetches the appropriate aggregated data from the
+ * service layer, and returns it as a JSON response.
+ */
 @WebServlet("/AnalysisServlet")
 public class AnalysisServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -24,6 +30,18 @@ public class AnalysisServlet extends HttpServlet {
 	private final RecordService recordService = new RecordService();
 	private final Gson gson = new Gson();
 
+	/**
+	 * Handles HTTP GET requests to generate data for analysis charts. It reads filter
+	 * parameters from the request, calls the appropriate service method based on the
+	 * requested graph type, and returns the data as a JSON string.
+	 *
+	 * @param request  the {@link HttpServletRequest} object that contains filter parameters
+	 * like 'graphType', 'dateRange', 'currency', and 'accounts[]'.
+	 * @param response the {@link HttpServletResponse} object that will be used to send the
+	 * JSON data or an error status back to the client.
+	 * @throws ServletException if a servlet-specific error occurs.
+	 * @throws IOException if an I/O error occurs during the response writing.
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -84,3 +102,4 @@ public class AnalysisServlet extends HttpServlet {
 	}
 
 }
+

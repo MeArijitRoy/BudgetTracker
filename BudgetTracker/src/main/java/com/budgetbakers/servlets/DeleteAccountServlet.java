@@ -13,12 +13,27 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Servlet controller for handling the deletion of a financial account.
+ * This servlet is triggered when a user confirms the deletion of an account
+ * from the accounts page.
+ */
 @WebServlet("/DeleteAccountServlet")
 public class DeleteAccountServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(DeleteAccountServlet.class);
     private final AccountService accountService = new AccountService();
 
+    /**
+     * Handles HTTP GET requests to delete an account. It retrieves the account ID
+     * from the request parameters and calls the {@link AccountService} to perform the deletion.
+     * It includes a security check to ensure users can only delete their own accounts.
+     *
+     * @param request  the {@link HttpServletRequest} object that contains the request the client has made of the servlet
+     * @param response the {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @throws ServletException if the request for the GET could not be handled
+     * @throws IOException if an input or output error is detected when the servlet handles the GET request
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,7 +55,6 @@ public class DeleteAccountServlet extends HttpServlet {
             logger.info("User {} is attempting to delete account with ID {}", userId, accountId);
 
             // 2. Call the service method to perform the deletion.
-            // Note: We will need to create this method in the AccountService.
             accountService.deleteAccount(accountId, userId);
 
             // 3. Redirect back to the AccountsServlet to show the updated list.
@@ -55,3 +69,4 @@ public class DeleteAccountServlet extends HttpServlet {
         }
     }
 }
+

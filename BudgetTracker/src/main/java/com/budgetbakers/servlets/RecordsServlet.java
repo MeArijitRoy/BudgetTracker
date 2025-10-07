@@ -21,15 +21,29 @@ import com.budgetbakers.entities.Transaction;
 import com.budgetbakers.entities.User;
 import com.budgetbakers.services.RecordService;
 
+/**
+ * Servlet controller for handling requests related to the main Records page.
+ * This servlet is responsible for fetching and displaying a list of the user's
+ * transactions, and for handling filter submissions to refine that list.
+ */
 @WebServlet("/RecordsServlet")
 public class RecordsServlet extends HttpServlet {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(RecordsServlet.class);
     private final RecordService recordService = new RecordService();
 
+    /**
+     * Handles HTTP GET requests to display the records page. It retrieves the list of
+     * transactions for the logged-in user, applying any filters specified in the request
+     * parameters. It also fetches the user's accounts and categories to populate the
+     * filter dropdowns, then forwards all data to the `records.jsp` for rendering.
+     *
+     * @param request  the {@link HttpServletRequest} object that may contain filter parameters
+     * like 'filterDate', 'filterType', 'filterCategory', and 'filterAccount'.
+     * @param response the {@link HttpServletResponse} object that contains the response the servlet sends to the client.
+     * @throws ServletException if the request for the GET could not be handled.
+     * @throws IOException if an input or output error is detected when the servlet handles the GET request.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,7 +52,6 @@ public class RecordsServlet extends HttpServlet {
         User user = (session != null) ? (User) session.getAttribute("user") : null;
 
         if (user == null) {
-            // The filter should prevent this, but it's a good safeguard.
             logger.warn("Unauthorized access to RecordsServlet. Redirecting to login.");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
@@ -52,11 +65,9 @@ public class RecordsServlet extends HttpServlet {
             filters.put("date", request.getParameter("filterDate"));
             filters.put("type", request.getParameter("filterType"));
             filters.put("category", request.getParameter("filterCategory"));
-
-            // filters.put("labels", request.getParameter("filterLabels"));
-            logger.debug("filterAccount raw param = {}", request.getParameter("filterAccount"));
-
             filters.put("account", request.getParameter("filterAccount"));
+            
+            logger.debug("Fetching records for user {} with filters: {}", userId, filters);
 
             // Fetch all necessary data from the service layer
             List<Transaction> transactions = recordService.getTransactionsForUser(userId, filters);
@@ -75,8 +86,8 @@ public class RecordsServlet extends HttpServlet {
 
         } catch (Exception e) {
             logger.error("An error occurred while fetching records for user.", e);
-            // Redirect to a generic error page
             response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
     }
 }
+
