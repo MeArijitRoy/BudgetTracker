@@ -104,17 +104,38 @@ public class AccountService {
     }
 
     public void addAccount(Account account) {
-        String sql = "INSERT INTO accounts (user_id, name, account_type, initial_balance, currency, color) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DbConnector.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, account.getUserId());
-            stmt.setString(2, account.getName());
-            stmt.setString(3, account.getAccountType());
-            stmt.setDouble(4, account.getInitialBalance());
-            stmt.setString(5, account.getCurrency());
-            stmt.setString(6, account.getColor());
-            stmt.executeUpdate();
-            logger.info("New account '{}' added successfully for user {}", account.getName(), account.getUserId());
+        boolean isFirstAccount = false;
+        try (Connection conn = DbConnector.getInstance().getConnection()) {
+            // Check if this is the user's first account
+            String checkSql = "SELECT COUNT(*) FROM accounts WHERE user_id = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setInt(1, account.getUserId());
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        isFirstAccount = true;
+                    }
+                }
+            }
+
+            // Insert the new account
+            String insertSql = "INSERT INTO accounts (user_id, name, account_type, initial_balance, currency, color) VALUES (?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                stmt.setInt(1, account.getUserId());
+                stmt.setString(2, account.getName());
+                stmt.setString(3, account.getAccountType());
+                stmt.setDouble(4, account.getInitialBalance());
+                stmt.setString(5, account.getCurrency());
+                stmt.setString(6, account.getColor());
+                stmt.executeUpdate();
+                logger.info("New account '{}' added successfully for user {}", account.getName(), account.getUserId());
+            }
+
+            // If it was the first account, create the default categories
+            if (isFirstAccount) {
+                logger.info("First account for user {}. Creating default categories.", account.getUserId());
+                createDefaultCategories(conn, account.getUserId());
+            }
+
         } catch (SQLException e) {
             logger.error("Error adding account for user {}", account.getUserId(), e);
         }
@@ -199,6 +220,52 @@ public class AccountService {
         } catch (SQLException e) {
             logger.error("Error deleting account ID {} for user ID {}", accountId, userId, e);
         }
+    }
+    private void createDefaultCategories(Connection conn, int userId) throws SQLException {
+        String parentSql = "INSERT INTO categories (user_id, name, parent_id) VALUES (?, ?, NULL)";
+        String childSql = "INSERT INTO categories (user_id, name, parent_id) VALUES (?, ?, ?)";
+
+        // This structure uses a Map to hold the parent categories and their sub-categories
+        Map<String, List<String>> categories = new HashMap<>();
+        categories.put("Income", List.of("Salary", "Freelance", "Gifts Received"));
+        categories.put("Food & Drinks", List.of("Groceries", "Restaurant", "Bar, cafe"));
+        categories.put("Shopping", List.of("Clothes", "Electronics", "Health and beauty"));
+        categories.put("Housing", List.of("Rent", "Mortgage", "Utilities"));
+        categories.put("Transportation", List.of("Fuel", "Public Transport", "Taxi"));
+        categories.put("Life & Entertainment", List.of("Holiday, trips, hotels", "Hobbies", "Education"));
+
+        // Iterate through the map to insert categories
+        for (Map.Entry<String, List<String>> entry : categories.entrySet()) {
+            String parentName = entry.getKey();
+            List<String> children = entry.getValue();
+
+            // Insert the parent category and get its generated ID
+            long parentId = 0;
+            try (PreparedStatement parentStmt = conn.prepareStatement(parentSql, Statement.RETURN_GENERATED_KEYS)) {
+                parentStmt.setInt(1, userId);
+                parentStmt.setString(2, parentName);
+                parentStmt.executeUpdate();
+                try (ResultSet generatedKeys = parentStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        parentId = generatedKeys.getLong(1);
+                    }
+                }
+            }
+
+            // Insert all child categories using the parent ID
+            if (parentId > 0 && children != null) {
+                try (PreparedStatement childStmt = conn.prepareStatement(childSql)) {
+                    for (String childName : children) {
+                        childStmt.setInt(1, userId);
+                        childStmt.setString(2, childName);
+                        childStmt.setLong(3, parentId);
+                        childStmt.addBatch(); // Add to a batch for efficient insertion
+                    }
+                    childStmt.executeBatch();
+                }
+            }
+        }
+        logger.info("Default categories created for user {}", userId);
     }
 }
 
