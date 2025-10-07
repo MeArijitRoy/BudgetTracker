@@ -26,7 +26,7 @@ public class PasswordServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         if (userService.verifyPassword(email, password)) {
-            session.setAttribute("user", email); 
+            session.setAttribute("user", userService.findUserByEmail(email)); 
             request.getRequestDispatcher("DashboardServlet").forward(request, response);
         }else if (email == null || email.isEmpty()) {
             session.setAttribute("message", "Please enter your email first.");
